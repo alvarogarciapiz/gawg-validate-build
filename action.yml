@@ -1,0 +1,39 @@
+name: 'GAWG Validate Build'
+description: 'This actiosn belogns to the GAWG workflow and is used to validate the configurations, Dockerfile, secrets, deployment, and runner.'
+author: Álvaro García Pizarro
+branding:
+  icon: 'settings'
+  color: 'gray-dark'
+
+inputs:
+  technology:
+    type: string
+    description: 'Repository name with owner. For example, actions/checkout'
+
+  docker:
+    type: boolean
+    description: 'Flag to validate the Dockerfile.'
+    default: false
+
+  self-hosted-runner:
+    type: boolean
+    description: 'Flag to validate the self-hosted runner.'
+    default: false
+
+  deployment:
+    type: string
+    description: 'Deployment type. For example, kubernetes, helm, etc.'
+
+outputs:
+  test:
+    description: "test"
+    value: ${{ steps.test.outputs.random-number }}
+
+runs:
+  using: "composite"
+  id: test
+  steps:
+    - name: Test
+      shell: bash
+      run: |
+        echo "random-number=$(echo $RANDOM)" >> $GITHUB_OUTPUT
