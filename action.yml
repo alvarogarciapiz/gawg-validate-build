@@ -1,5 +1,5 @@
 name: 'GAWG Validate Build'
-description: 'This actiosn belogns to the GAWG workflow and is used to validate the configurations, Dockerfile, secrets, deployment, and runner.'
+description: 'This action belongs to the GAWG workflow and is used to validate the configurations, Dockerfile, secrets, deployment, and runner.'
 author: Álvaro García Pizarro
 branding:
   icon: 'settings'
@@ -8,7 +8,7 @@ branding:
 inputs:
   technology:
     type: string
-    description: 'Repository name with owner. For example, actions/checkout'
+    description: 'Technology to validate. For example, nodejs, python, etc.'
 
   docker:
     type: boolean
@@ -33,7 +33,148 @@ runs:
   using: "composite"
   id: test
   steps:
-    - name: Test
+    - name: GAWG Information
       shell: bash
       run: |
-        echo "random-number=$(echo $RANDOM)" >> $GITHUB_OUTPUT
+        echo "This action works with the GAWG workflow and will validate configurations, Dockerfile, secrets, deployment, and runner."
+        echo "If any errors are found, the action will fail. Make sure to fix them before continuing. :)"
+        echo "📡 Technology to validate is ${{ inputs.technology }}."
+        if [ "${{ inputs.docker }}" = "true" ]; then
+          echo "🐳 Dockerfile validation is enabled."
+        else
+          echo "🐳 Dockerfile validation is disabled."
+        fi
+        if [ "${{ inputs.self-hosted-runner }}" = "true" ]; then
+          echo "🏠 Self-hosted runner validation is enabled."
+        else
+          echo "🏠 Self-hosted runner validation is disabled."
+        fi
+        echo "🚀 Deployment type is ${{ inputs.deployment }}."
+
+    - name: Technology validation
+      id: technology
+      shell: bash
+      run: |
+        if [ "${{ inputs.technology }}" = "nodejs" ]; then
+          echo "🔧 Validating Node.js configurations..."
+          if [ -f "package.json" ]; then
+            echo "✅ package.json found. Validation PASSED."
+          else
+            echo "❌ No package.json was found. Please add a package.json to the root of your repository."
+            echo "❌ No package.json was found. Please add a package.json to the root of your repository." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+        elif [ "${{ inputs.technology }}" = "python" ]; then
+          echo "🔧 Validating Python configurations..."
+          if [ -f "requirements.txt" ]; then
+            echo "✅ requirements.txt found. Validation PASSED."
+          else
+            echo "❌ No requirements.txt was found. Please add a requirements.txt to the root of your repository."
+            echo "❌ No requirements.txt was found. Please add a requirements.txt to the root of your repository." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+        elif [ "${{ inputs.technology }}" = "java" ]; then
+          echo "🔧 Validating Java configurations..."
+          if [ -f "pom.xml" ]; then
+            echo "✅ pom.xml found. Validation PASSED."
+          else
+            echo "❌ No pom.xml was found. Please add a pom.xml to the root of your repository."
+            echo "❌ No pom.xml was found. Please add a pom.xml to the root of your repository." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+        else
+          echo "❌ Technology not supported. Please choose nodejs, python, or java."
+          echo "❌ Technology not supported. Please choose nodejs, python, or java." >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi
+
+    - name: Dockerfile validation
+      id: dockerfile
+      shell: bash
+      run: |
+        if [ "${{ inputs.docker }}" = "true" ]; then
+          if [ -f "Dockerfile" ]; then
+            echo "✅ Dockerfile found. Validation PASSED."
+          else
+            echo "❌ No Dockerfile was found. Please add a Dockerfile to the root of your repository."
+            echo "❌ No Dockerfile was found. Please add a Dockerfile to the root of your repository." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+        else
+          echo "✅ Dockerfile validation SKIPPED (Docker was not set up)."
+        fi
+
+    - name: Self-hosted runner validation
+      id: runner
+      shell: bash
+      run: |
+        if [ "${{ inputs.self-hosted-runner }}" = "false" ]; then
+          echo "⚠️ You are using GitHub Actions runners, not self-hosted runners."
+          echo "⚠️ You have a limited quota depending on your plan. Check it here: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions"
+        else
+          echo "🔧 Validating self-hosted runner configurations..."
+
+          if [ "${{ inputs.technology }}" = "nodejs" ]; then
+            echo "🔧 Validating Node.js configurations..."
+            if command -v node > /dev/null; then
+              echo "✅ Node.js is installed. Version: $(node -v)"
+            else
+              echo "❌ Node.js is not installed. Please install Node.js."
+              echo "❌ Node.js is not installed. Please install Node.js." >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+          elif [ "${{ inputs.technology }}" = "python" ]; then
+            echo "🔧 Validating Python configurations..."
+            if command -v python > /dev/null; then
+              echo "✅ Python is installed. Version: $(python --version)"
+            else
+              echo "❌ Python is not installed. Please install Python."
+              echo "❌ Python is not installed. Please install Python." >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+          elif [ "${{ inputs.technology }}" = "java" ]; then
+            echo "🔧 Validating Java configurations..."
+            if command -v java > /dev/null; then
+              echo "✅ Java is installed. Version: $(java -version 2>&1 | head -n 1)"
+            else
+              echo "❌ Java is not installed. Please install Java."
+              echo "❌ Java is not installed. Please install Java." >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+          else
+            echo "❌ Technology not supported. Please choose nodejs, python, or java."
+            echo "❌ Technology not supported. Please choose nodejs, python, or java." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+        fi
+
+    - name: Secrets validation
+      id: deployment
+      shell: bash
+      run: |
+        echo "🔧 Validating secrets..."
+        if [ -z "${{ secrets.TEST_SECRET }}" ]; then
+            echo "❌ TEST_SECRET is not set. Please add the TEST_SECRET secret to your repository."
+            exit 1
+          else
+            echo "✅ TEST_SECRET is set."
+          fi
+
+    - name: Deployment validation
+      id: deployment
+      shell: bash
+      run: |
+        echo TODO
+
+    - name: Summary
+      id: summary
+      shell: bash
+      run: |
+        echo "🎉 All validations passed successfully! | Technology: ${{ inputs.technology }}, Docker enabled: ${{ inputs.docker }}, Self-hosted runners: ${{ inputs.self-hosted-runner }}, Deployment type: ${{ inputs.deployment }}"
+        echo "🎉 All validations passed successfully! | Technology: ${{ inputs.technology }}, Docker enabled: ${{ inputs.docker }}, Self-hosted runners: ${{ inputs.self-hosted-runner }}, Deployment type: ${{ inputs.deployment }}" >> $GITHUB_STEP_SUMMARY
+        echo "👤 Workflow triggered by: ${{ github.actor }}"
+        echo "🔀 Branch: ${{ github.ref }}"
+        echo "⚡ Trigger: ${{ github.event_name }}"
+        echo "🆔 Workflow run ID: ${{ github.run_id }}"
+        echo "🕒 Execution time: $(date)"
+        echo "Workflow Run information. Workflow (${{ github.run_id }}) triggered by ${{ github.actor }} on ${{ github.event_name }} from ${{ github.ref }} branch at $(date)." >> $GITHUB_STEP_SUMMARY
