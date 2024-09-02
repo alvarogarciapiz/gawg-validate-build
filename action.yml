@@ -25,13 +25,12 @@ inputs:
     description: 'Deployment type. For example, kubernetes, helm, etc.'
 
 outputs:
-  test:
-    description: "test"
-    value: ${{ steps.test.outputs.random-number }}
+  JSON:
+    description: "JSON string containing workflow config parameters from workflow_config.json."
+    value: ${{ steps.generate-config.outputs.JSON }}
 
 runs:
   using: "composite"
-  id: test
   steps:
     - name: GAWG Information
       shell: bash
@@ -165,6 +164,29 @@ runs:
       shell: bash
       run: |
         echo TODO
+
+    - name: Check JQ installation
+      if: ${{ inputs.self-hosted-runner == 'true' }}
+      shell: bash
+      run: |
+        if ! command -v jq > /dev/null; then
+          echo "❌ jq is not installed. Trying to install jq..."
+          set -e
+          wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+          chmod +x jq
+          sudo mv jq /usr/local/bin
+          echo "✅ jq installed. Version: $(jq --version)"
+        else
+          echo "✅ jq found. Version: $(jq --version)"
+        fi
+
+    - name: Generate JSON config string
+      id: generate-config
+      shell: bash
+      run: |
+        echo "Reading and converting workflow_config.yml to JSON..."
+        json=$(cat workflow_config.yml | awk -F'=' '{gsub(/"/, "", $2); printf "{\"%s\":\"%s\"}\n", $1, $2}' | jq -s 'add')
+        echo "JSON=$json" >> $GITHUB_OUTPUT
 
     - name: Summary
       id: summary
