@@ -186,7 +186,8 @@ runs:
       run: |
         echo "Reading and converting workflow_config.yml to JSON..."
         json=$(cat workflow_config.yml | awk -F'=' '{gsub(/"/, "", $2); printf "{\"%s\":\"%s\"}\n", $1, $2}' | jq -s 'add')
-        echo "JSON=$json" >> $GITHUB_OUTPUT
+        echo $json
+        echo "JSON='$json'" >> $GITHUB_OUTPUT
 
     - name: Summary
       id: summary
