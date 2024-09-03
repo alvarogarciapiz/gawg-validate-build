@@ -8,7 +8,7 @@ branding:
 inputs:
   technology:
     type: string
-    description: 'Technology to validate. For example, nodejs, python, etc.'
+    description: 'Technology to validate. For example, node, python, etc.'
 
   docker:
     type: boolean
@@ -54,7 +54,7 @@ runs:
       id: technology
       shell: bash
       run: |
-        if [ "${{ inputs.technology }}" = "nodejs" ]; then
+        if [ "${{ inputs.technology }}" = "node" ]; then
           echo "🔧 Validating Node.js configurations..."
           if [ -f "package.json" ]; then
             echo "✅ package.json found. Validation PASSED."
@@ -82,8 +82,8 @@ runs:
             exit 1
           fi
         else
-          echo "❌ Technology not supported. Please choose nodejs, python, or java."
-          echo "❌ Technology not supported. Please choose nodejs, python, or java." >> $GITHUB_STEP_SUMMARY
+          echo "❌ Technology not supported. Please choose node, python, or java."
+          echo "❌ Technology not supported. Please choose node, python, or java." >> $GITHUB_STEP_SUMMARY
           exit 1
         fi
 
@@ -113,7 +113,7 @@ runs:
         else
           echo "🔧 Validating self-hosted runner configurations..."
 
-          if [ "${{ inputs.technology }}" = "nodejs" ]; then
+          if [ "${{ inputs.technology }}" = "node" ]; then
             echo "🔧 Validating Node.js configurations..."
             if command -v node > /dev/null; then
               echo "✅ Node.js is installed. Version: $(node -v)"
@@ -141,8 +141,8 @@ runs:
               exit 1
             fi
           else
-            echo "❌ Technology not supported. Please choose nodejs, python, or java."
-            echo "❌ Technology not supported. Please choose nodejs, python, or java." >> $GITHUB_STEP_SUMMARY
+            echo "❌ Technology not supported. Please choose node, python, or java."
+            echo "❌ Technology not supported. Please choose node, python, or java." >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
         fi
