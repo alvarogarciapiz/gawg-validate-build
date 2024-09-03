@@ -13,6 +13,10 @@ This GitHub Action belongs to the GAWG workflow and is used to validate the conf
 - **self-hosted-runner** (boolean): Flag to validate the self-hosted runner. Default: `false`.
 - **deployment** (string): Deployment type. For example, kubernetes, helm, etc.
 
+## Outputs
+
+- **JSON** (string): JSON String containing the values of the deployment.yml file.
+
 ## Usage
 
 ```yaml
