@@ -205,5 +205,6 @@ runs:
         echo "Workflow Run information. Workflow (${{ github.run_id }}) triggered by ${{ github.actor }} on ${{ github.event_name }} from ${{ github.ref }} branch at $(date)." >> $GITHUB_STEP_SUMMARY
 
     - name: test json output
+      shell: bash
       run: |
         echo ${{ steps.generate-config.outputs.JSON }}
