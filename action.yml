@@ -8,7 +8,7 @@ branding:
 inputs:
   technology:
     type: string
-    description: 'Technology to validate. For example, node, python, etc.'
+    description: 'Technology to validate. For example, node, python, java, etc.'
 
   docker:
     type: boolean
@@ -35,6 +35,7 @@ runs:
     - name: GAWG Information
       shell: bash
       run: |
+        echo "========================================= VALIDATION INFO =========================================="
         echo "This action works with the GAWG workflow and will validate configurations, Dockerfile, secrets, deployment, and runner."
         echo "If any errors are found, the action will fail. Make sure to fix them before continuing. :)"
         echo "📡 Technology to validate is ${{ inputs.technology }}."
@@ -49,11 +50,13 @@ runs:
           echo "🏠 Self-hosted runner validation is disabled."
         fi
         echo "🚀 Deployment type is ${{ inputs.deployment }}."
+        echo ""
 
     - name: Technology validation
       id: technology
       shell: bash
       run: |
+        echo "====================================== TECHNOLOGY VALIDATION ======================================="
         if [ "${{ inputs.technology }}" = "node" ]; then
           echo "🔧 Validating Node.js configurations..."
           if [ -f "package.json" ]; then
@@ -86,11 +89,13 @@ runs:
           echo "❌ Technology not supported. Please choose node, python, or java." >> $GITHUB_STEP_SUMMARY
           exit 1
         fi
+        echo ""
 
     - name: Dockerfile validation
       id: dockerfile
       shell: bash
       run: |
+        echo "======================================== DOCKER VALIDATION ========================================="
         if [ "${{ inputs.docker }}" = "true" ]; then
           if [ -f "Dockerfile" ]; then
             echo "✅ Dockerfile found. Validation PASSED."
@@ -102,11 +107,13 @@ runs:
         else
           echo "✅ Dockerfile validation SKIPPED (Docker was not set up)."
         fi
+        echo ""
 
     - name: Self-hosted runner validation
       id: runner
       shell: bash
       run: |
+        echo "====================================== RUNNER VALIDATION ======================================="
         if [ "${{ inputs.self-hosted-runner }}" = "false" ]; then
           echo "⚠️ You are using GitHub Actions runners, not self-hosted runners."
           echo "⚠️ You have a limited quota depending on your plan. Check it here: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions"
@@ -146,6 +153,7 @@ runs:
             exit 1
           fi
         fi
+        echo ""
 
     # - name: Secrets validation
     #   id: deployment
@@ -163,7 +171,8 @@ runs:
       id: deployment
       shell: bash
       run: |
-        echo TODO
+        echo "====================================== TECHNOLOGY VALIDATION ======================================="
+        echo ""
 
     - name: Check JQ installation
       if: ${{ inputs.self-hosted-runner == 'true' }}
@@ -184,10 +193,18 @@ runs:
       id: generate-config
       shell: bash
       run: |
+        echo "====================================== WORKFLOW_CONFIG JSON PARSING ======================================="
+        # Check if workflow_config.yml exists
+        if [ ! -f workflow_config.yml ]; then
+          echo "❌ Error: workflow_config.yml not found. Add the provided workflow_config.yml file to your repository and retry."
+          echo "❌ Error: workflow_config.yml not found. Add the provided workflow_config.yml file to your repository and retry." >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi
         echo "Reading and converting workflow_config.yml to JSON..."
         json=$(cat workflow_config.yml | awk -F'=' '{gsub(/"/, "", $2); printf "{\"%s\":\"%s\"}\n", $1, $2}' | jq -s 'add')
         echo $json > temp.json
         json=$(jq -r --compact-output '.' temp.json)
+        echo "Your workflow configuration"
         cat temp.json
         echo "JSON=$json" >> $GITHUB_OUTPUT
 
@@ -195,16 +212,19 @@ runs:
       id: summary
       shell: bash
       run: |
-        echo "🎉 All validations passed successfully! | Technology: ${{ inputs.technology }}, Docker enabled: ${{ inputs.docker }}, Self-hosted runners: ${{ inputs.self-hosted-runner }}, Deployment type: ${{ inputs.deployment }}"
-        echo "🎉 All validations passed successfully! | Technology: ${{ inputs.technology }}, Docker enabled: ${{ inputs.docker }}, Self-hosted runners: ${{ inputs.self-hosted-runner }}, Deployment type: ${{ inputs.deployment }}" >> $GITHUB_STEP_SUMMARY
+        echo "====================================== WORKFLOW SUMMARY ======================================="
+        echo "## Workflow information" >> $GITHUB_STEP_SUMMARY
+        echo "===> Workflow information <==="
+        echo "🎉 All validations passed successfully! | Technology: ${{ inputs.technology }} | Docker enabled: ${{ inputs.docker }} | Self-hosted runners: ${{ inputs.self-hosted-runner }} | Deployment type: ${{ inputs.deployment }}"
+        echo "🎉 All validations passed successfully! | Technology: ${{ inputs.technology }} | Docker enabled: ${{ inputs.docker }} | Self-hosted runners: ${{ inputs.self-hosted-runner }} | Deployment type: ${{ inputs.deployment }}" >> $GITHUB_STEP_SUMMARY
         echo "👤 Workflow triggered by: ${{ github.actor }}"
+        echo "👤 Workflow triggered by: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
         echo "🔀 Branch: ${{ github.ref }}"
+        echo "🔀 Branch: ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
         echo "⚡ Trigger: ${{ github.event_name }}"
+        echo "⚡ Trigger: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
         echo "🆔 Workflow run ID: ${{ github.run_id }}"
+        echo "🆔 Workflow run ID: ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
         echo "🕒 Execution time: $(date)"
-        echo "Workflow Run information. Workflow (${{ github.run_id }}) triggered by ${{ github.actor }} on ${{ github.event_name }} from ${{ github.ref }} branch at $(date)." >> $GITHUB_STEP_SUMMARY
-
-    - name: test json output
-      shell: bash
-      run: |
-        echo ${{ steps.generate-config.outputs.JSON }}
+        echo "🕒 Execution time: $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "==============================================================================================="
