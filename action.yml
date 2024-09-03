@@ -176,7 +176,7 @@ runs:
       shell: bash
       run: |
         echo ""
-        echo "====================================== TECHNOLOGY VALIDATION ======================================="
+        echo "====================================== DEPLOYMENT VALIDATION ======================================="
         echo ""
 
     - name: Check JQ installation
@@ -222,11 +222,10 @@ runs:
         echo ""
         echo "====================================== WORKFLOW SUMMARY ======================================="
         echo "## Workflow information" >> $GITHUB_STEP_SUMMARY
-        echo "===> Workflow information <==="
         echo "🎉 All validations passed successfully! | Technology: ${{ inputs.technology }} | Docker enabled: ${{ inputs.docker }} | Self-hosted runners: ${{ inputs.self-hosted-runner }} | Deployment type: ${{ inputs.deployment }}"
         echo "🎉 All validations passed successfully! | Technology: ${{ inputs.technology }} | Docker enabled: ${{ inputs.docker }} | Self-hosted runners: ${{ inputs.self-hosted-runner }} | Deployment type: ${{ inputs.deployment }}" >> $GITHUB_STEP_SUMMARY
-        echo "👤 Workflow triggered by: ${{ github.actor }}"
-        echo "👤 Workflow triggered by: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+        echo "👤 Workflow (${{ github.workflow }}) triggered by: ${{ github.actor }} on ${{ github.repository }}"
+        echo "👤 Workflow (${{ github.workflow }}) triggered by: ${{ github.actor }} on ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
         echo "🔀 Branch: ${{ github.ref }}"
         echo "🔀 Branch: ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
         echo "⚡ Trigger: ${{ github.event_name }}"
@@ -235,4 +234,6 @@ runs:
         echo "🆔 Workflow run ID: ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
         echo "🕒 Execution time: $(date)"
         echo "🕒 Execution time: $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "🔗 Run URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        echo "🔗 Run URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
         echo "==============================================================================================="
