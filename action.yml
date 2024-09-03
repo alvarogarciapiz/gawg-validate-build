@@ -147,17 +147,17 @@ runs:
           fi
         fi
 
-    - name: Secrets validation
-      id: deployment
-      shell: bash
-      run: |
-        echo "🔧 Validating secrets..."
-        if [ -z "${{ secrets.TEST_SECRET }}" ]; then
-            echo "❌ TEST_SECRET is not set. Please add the TEST_SECRET secret to your repository."
-            exit 1
-          else
-            echo "✅ TEST_SECRET is set."
-          fi
+    # - name: Secrets validation
+    #   id: deployment
+    #   shell: bash
+    #   run: |
+    #     echo "🔧 Validating secrets..."
+    #     if [ -z "${{ secrets.TEST_SECRET }}" ]; then
+    #         echo "❌ TEST_SECRET is not set. Please add the TEST_SECRET secret to your repository."
+    #         exit 1
+    #       else
+    #         echo "✅ TEST_SECRET is set."
+    #       fi
 
     - name: Deployment validation
       id: deployment
