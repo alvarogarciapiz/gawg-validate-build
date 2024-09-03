@@ -35,6 +35,7 @@ runs:
     - name: GAWG Information
       shell: bash
       run: |
+        echo ""
         echo "========================================= VALIDATION INFO =========================================="
         echo "This action works with the GAWG workflow and will validate configurations, Dockerfile, secrets, deployment, and runner."
         echo "If any errors are found, the action will fail. Make sure to fix them before continuing. :)"
@@ -56,6 +57,7 @@ runs:
       id: technology
       shell: bash
       run: |
+        echo ""
         echo "====================================== TECHNOLOGY VALIDATION ======================================="
         if [ "${{ inputs.technology }}" = "node" ]; then
           echo "🔧 Validating Node.js configurations..."
@@ -95,6 +97,7 @@ runs:
       id: dockerfile
       shell: bash
       run: |
+        echo ""
         echo "======================================== DOCKER VALIDATION ========================================="
         if [ "${{ inputs.docker }}" = "true" ]; then
           if [ -f "Dockerfile" ]; then
@@ -113,6 +116,7 @@ runs:
       id: runner
       shell: bash
       run: |
+        echo ""
         echo "====================================== RUNNER VALIDATION ======================================="
         if [ "${{ inputs.self-hosted-runner }}" = "false" ]; then
           echo "⚠️ You are using GitHub Actions runners, not self-hosted runners."
@@ -171,6 +175,7 @@ runs:
       id: deployment
       shell: bash
       run: |
+        echo ""
         echo "====================================== TECHNOLOGY VALIDATION ======================================="
         echo ""
 
@@ -178,6 +183,7 @@ runs:
       if: ${{ inputs.self-hosted-runner == 'true' }}
       shell: bash
       run: |
+        echo ""
         if ! command -v jq > /dev/null; then
           echo "❌ jq is not installed. Trying to install jq..."
           set -e
@@ -193,6 +199,7 @@ runs:
       id: generate-config
       shell: bash
       run: |
+        echo ""
         echo "====================================== WORKFLOW_CONFIG JSON PARSING ======================================="
         # Check if workflow_config.yml exists
         if [ ! -f workflow_config.yml ]; then
@@ -212,6 +219,7 @@ runs:
       id: summary
       shell: bash
       run: |
+        echo ""
         echo "====================================== WORKFLOW SUMMARY ======================================="
         echo "## Workflow information" >> $GITHUB_STEP_SUMMARY
         echo "===> Workflow information <==="
