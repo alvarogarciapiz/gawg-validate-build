@@ -237,3 +237,7 @@ runs:
         echo "🔗 Run URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         echo "🔗 Run URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
         echo "==============================================================================================="
+
+    - name: print config json string
+      shell: bash
+      run: echo ${{ steps.generate-config.outputs.JSON }}
