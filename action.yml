@@ -28,9 +28,6 @@ outputs:
   JSON:
     description: "JSON string containing workflow config parameters from workflow_config.json."
     value: ${{ steps.generate-config.outputs.JSON }}
-  VALIDATE_SUMMARY:
-    description: "Summary of the validation process."
-    value: ${{ steps.summary.outputs.summary }}
 
 runs:
   using: "composite"
