@@ -245,5 +245,5 @@ runs:
       id: generate-summary
       shell: bash
       run: |
-        summary=$(echo $GITHUB_STEP_SUMMARY)
-        echo "VALIDATE_SUMMARY=$summary" >> $GITHUB_OUTPUT
+        echo $GITHUB_STEP_SUMMARY
+        # echo "VALIDATE_SUMMARY=$summary" >> $GITHUB_OUTPUT
