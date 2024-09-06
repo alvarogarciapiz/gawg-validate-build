@@ -28,6 +28,9 @@ outputs:
   JSON:
     description: "JSON string containing workflow config parameters from workflow_config.json."
     value: ${{ steps.generate-config.outputs.JSON }}
+  VALIDATE_SUMMARY:
+    description: "Summary of the validation process."
+    value: ${{ steps.summary.outputs.summary }}
 
 runs:
   using: "composite"
@@ -238,6 +241,9 @@ runs:
         echo "🔗 Run URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
         echo "==============================================================================================="
 
-    - name: print config json string
+    - name: Generate Workflow Summary Report Output
+      id: generate-summary
       shell: bash
-      run: echo ${{ steps.generate-config.outputs.JSON }}
+      run: |
+        summary=$(cat $GITHUB_STEP_SUMMARY)
+        echo "VALIDATE_SUMMARY=$summary" >> $GITHUB_OUTPUT
