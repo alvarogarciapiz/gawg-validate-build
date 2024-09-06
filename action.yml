@@ -217,33 +217,3 @@ runs:
         echo "Your workflow configuration"
         cat temp.json
         echo "JSON=$json" >> $GITHUB_OUTPUT
-
-    - name: Summary
-      id: summary
-      shell: bash
-      run: |
-        echo ""
-        echo "====================================== WORKFLOW SUMMARY ======================================="
-        echo "## Workflow information" >> $GITHUB_STEP_SUMMARY
-        echo "🎉 All validations passed successfully! | Technology: ${{ inputs.technology }} | Docker enabled: ${{ inputs.docker }} | Self-hosted runners: ${{ inputs.self-hosted-runner }} | Deployment type: ${{ inputs.deployment }}"
-        echo "🎉 All validations passed successfully! | Technology: ${{ inputs.technology }} | Docker enabled: ${{ inputs.docker }} | Self-hosted runners: ${{ inputs.self-hosted-runner }} | Deployment type: ${{ inputs.deployment }}" >> $GITHUB_STEP_SUMMARY
-        echo "👤 Workflow (${{ github.workflow }}) triggered by: ${{ github.actor }} on ${{ github.repository }}"
-        echo "👤 Workflow (${{ github.workflow }}) triggered by: ${{ github.actor }} on ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
-        echo "🔀 Branch: ${{ github.ref }}"
-        echo "🔀 Branch: ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
-        echo "⚡ Trigger: ${{ github.event_name }}"
-        echo "⚡ Trigger: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
-        echo "🆔 Workflow run ID: ${{ github.run_id }}"
-        echo "🆔 Workflow run ID: ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
-        echo "🕒 Execution time: $(date)"
-        echo "🕒 Execution time: $(date)" >> $GITHUB_STEP_SUMMARY
-        echo "🔗 Run URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-        echo "🔗 Run URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
-        echo "==============================================================================================="
-
-    - name: Generate Workflow Summary Report Output
-      id: generate-summary
-      shell: bash
-      run: |
-        echo $GITHUB_STEP_SUMMARY
-        # echo "VALIDATE_SUMMARY=$summary" >> $GITHUB_OUTPUT
