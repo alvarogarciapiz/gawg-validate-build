@@ -95,6 +95,15 @@ runs:
             echo "❌ No pom.xml was found. Please add a pom.xml to the root of your repository." >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
+        elif [ "${{ inputs.technology }}" = "ruby" ]; then
+          echo "🔧 Validating Ruby configurations..."
+          if [ -f "Gemfile" ]; then
+            echo "✅ Gemfile found. Validation PASSED."
+          else
+            echo "❌ No Gemfile was found. Please add a Gemfile to the root of your repository."
+            echo "❌ No Gemfile was found. Please add a Gemfile to the root of your repository." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
         else
           echo "❌ Technology not supported. Please choose node, python, maven or java."
           echo "❌ Technology not supported. Please choose node, python, maven or java." >> $GITHUB_STEP_SUMMARY
@@ -167,6 +176,15 @@ runs:
             else
               echo "❌ Java is not installed. Please install Java JDK."
               echo "❌ Java is not installed. Please install Java JDK." >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+          elif [ "${{ inputs.technology }}" = "ruby" ]; then
+            echo "🔧 Validating Ruby configurations..."
+            if command -v ruby > /dev/null; then
+              echo "✅ Ruby is installed. Version: $(ruby --version)"
+            else
+              echo "❌ Ruby is not installed. Please install Ruby."
+              echo "❌ Ruby is not installed. Please install Ruby." >> $GITHUB_STEP_SUMMARY
               exit 1
             fi
           else
