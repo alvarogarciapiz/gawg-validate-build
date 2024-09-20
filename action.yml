@@ -8,7 +8,7 @@ branding:
 inputs:
   technology:
     type: string
-    description: 'Technology to validate. For example, node, python, maven, java, etc.'
+    description: 'Technology to validate. For example, node, python, maven, java, go, etc.'
 
   docker:
     type: boolean
@@ -77,6 +77,15 @@ runs:
             echo "❌ No requirements.txt was found. Please add a requirements.txt to the root of your repository." >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
+        elif [ "${{ inputs.technology }}" = "go" ]; then
+          echo "🔧 Validating Go configuration..."
+          if [ -f "go.mod" ]; then
+            echo "✅ go.mod found. Validation PASSED."
+          else
+            echo "❌ No go.mod was found. Please add a go.mod to the root of your repository."
+            echo "❌ No go.mod was found. Please add a go.mod to the root of your repository." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
         elif [ "${{ inputs.technology }}" = "java" ] || [ "${{ inputs.technology }}" = "maven" ]; then
           echo "🔧 Validating Java configurations..."
           if [ -f "pom.xml" ]; then
@@ -140,6 +149,15 @@ runs:
             else
               echo "❌ Python is not installed. Please install Python."
               echo "❌ Python is not installed. Please install Python." >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+          elif [ "${{ inputs.technology }}" = "go" ]; then
+            echo "🔧 Validating Go configuration..."
+            if command -v go > /dev/null; then
+              echo "✅ Go is installed. Version: $(go --version)"
+            else
+              echo "❌ Go is not installed. Please install Go."
+              echo "❌ Go is not installed. Please install Go." >> $GITHUB_STEP_SUMMARY
               exit 1
             fi
           elif [ "${{ inputs.technology }}" = "java" ] || [ "${{ inputs.technology }}" = "maven" ]; then
