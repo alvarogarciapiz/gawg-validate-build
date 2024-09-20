@@ -1,0 +1,48 @@
+name: Release new V1
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup_and_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Delete all tags from remote
+        shell: bash
+        run: |
+          git fetch --tags
+          git tag -l | xargs -I {} git push origin --delete {}
+          git tag -l | xargs -I {} git tag -d {}
+
+      - name: Delete all releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          releases=$(gh release list --limit 100 | awk '{print $1}')
+          for release in $releases; do
+            gh release delete "$release" --yes
+          done
+        
+
+      - name: Create new tag v1
+        shell: bash
+        run: |
+          git tag v1
+          git push origin v1
+
+      - name: Create new release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh release create v1 --title "v1" --notes "Release v1"
